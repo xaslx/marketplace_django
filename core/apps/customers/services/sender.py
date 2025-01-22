@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-
 from core.apps.customers.entities import CustomerEntity
 
 
