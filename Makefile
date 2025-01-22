@@ -55,3 +55,8 @@ superuser:
 .PHONY: collectstatic
 collectstatic:
 	${EXEC} ${APP_CONTAINER} ${MANAGEPY} collectstatic
+
+
+.PHONY: run-tests
+run-tests:
+	${EXEC} ${APP_CONTAINER} pytest -s -v
