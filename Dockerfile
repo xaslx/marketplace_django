@@ -10,7 +10,8 @@ RUN apk update && \
     gcc \
     musl-dev \
     libpq-dev \
-    nmap
+    nmap \
+    linux-headers
 
 ADD pyproject.toml /app
 
