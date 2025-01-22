@@ -1,9 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-from core.apps.products.entities.products import Product
-
-
+from core.apps.products.entities.products import ProductEntity
 
 
 class ProductSchema(BaseModel):
@@ -14,7 +12,7 @@ class ProductSchema(BaseModel):
     updated_at: datetime | None = None
 
     @staticmethod
-    def from_entity(entity: Product) -> 'ProductSchema':
+    def from_entity(entity: ProductEntity) -> 'ProductSchema':
         return ProductSchema(
             id=entity.id,
             title=entity.title,
