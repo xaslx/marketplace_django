@@ -1,6 +1,6 @@
 from django.db import models
 from core.apps.common.models import TimedBaseModel
-from core.apps.products.entities.products import Product as ProductEntity
+from core.apps.products.entities.products import ProductEntity as ProductEntity
 
 
 
