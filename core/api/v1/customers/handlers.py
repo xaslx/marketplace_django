@@ -1,15 +1,14 @@
 from django.http import HttpRequest
 from ninja import Router
 from ninja.errors import HttpError
+from punq import Container
 
 from core.api.schemas import ApiResponse
 from core.api.v1.customers.schemas import (AuthInSchema, AuthOutSchema,
                                            TokenInSchema, TokenOutSchema)
 from core.apps.common.exceptions import ServiceException
-from core.apps.customers.services.auth import AuthService
-from core.apps.customers.services.codes import DjangoCacheCodeService
-from core.apps.customers.services.customers import ORMCustomerService
-from core.apps.customers.services.sender import ConsoleSenderService
+from core.apps.customers.services.auth import BaseAuthService
+from core.project.containers import get_container
 
 
 router: Router = Router(
@@ -26,12 +25,11 @@ def auth_handler(
     request: HttpRequest,
     schema: AuthInSchema,
 ):
-    auth_service: AuthService = AuthService(
-        customer_service=ORMCustomerService(),
-        code_service=DjangoCacheCodeService(),
-        sender_service=ConsoleSenderService(),
-    )
+    container: Container = get_container()
+    auth_service: BaseAuthService = container.resolve(BaseAuthService)
+    
     auth_service.authorize(phone=schema.phone)
+    
     return ApiResponse(
         data=AuthOutSchema(
             message=f'Code sent to: {schema.phone}',
@@ -48,11 +46,9 @@ def get_token_handler(
     request: HttpRequest,
     schema: TokenInSchema,
 ):
-    auth_service: AuthService = AuthService(
-        customer_service=ORMCustomerService(),
-        code_service=DjangoCacheCodeService(),
-        sender_service=ConsoleSenderService(),
-    )
+    container: Container = get_container()
+    auth_service: BaseAuthService = container.resolve(BaseAuthService)
+    
     try:
         token: str = auth_service.confirm(code=schema.code, phone=schema.phone)
     except ServiceException as exception:
@@ -60,4 +56,5 @@ def get_token_handler(
             status_code=400,
             message=exception.message
         )
+        
     return ApiResponse(data=TokenOutSchema(token=token))
