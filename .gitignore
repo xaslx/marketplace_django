@@ -4,3 +4,5 @@
 venv
 .venv
 core/project/settings/local.py
+static/*
+!static/.gitkeep
