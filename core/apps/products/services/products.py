@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Iterable
 
 from django.db.models import Q
+from core.apps.products.exceptions.products import ProductNotFoundException
 from core.apps.products.filters.products import ProductFilters
 from core.api.filters import PaginationIn
 from core.apps.products.entities.products import ProductEntity
@@ -22,7 +23,7 @@ class BaseProductService(ABC):
         ...
 
     @abstractmethod
-    def get_product_by_id(self, id: int) -> ProductEntity:
+    def get_product_by_id(self, product_id: int) -> ProductEntity:
         ...
 
 
@@ -50,6 +51,10 @@ class ORMProductService(BaseProductService):
         query = self._build_product_query(filters=filters)
         return ProductModel.objects.filter(query).count()
 
-    def get_product_by_id(self, id: int) -> ProductEntity:
-        qs = ProductModel.objects.filter(is_visible=True).get(pk=id)
-        return ProductModel.to_entity(qs)
+    def get_product_by_id(self, product_id: int) -> ProductEntity | None:
+        try:
+            product_dto: ProductModel | None = ProductModel.objects.get(pk=product_id)
+        except ProductModel.DoesNotExist:
+            raise ProductNotFoundException(product_id=product_id)
+        
+        return product_dto.to_entity()
