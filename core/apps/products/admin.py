@@ -1,10 +1,10 @@
 from django.contrib import admin
 from core.apps.products.models.products import Product
-from core.apps.products.models.reviews import ProductReview
+from core.apps.products.models.reviews import Review
 
 
 class ProductReviewInline(admin.TabularInline):
-    model = ProductReview
+    model = Review
     extra = 0
 
 
@@ -14,7 +14,7 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = (ProductReviewInline, )
     
 
-@admin.register(ProductReview)
+@admin.register(Review)
 class ProductReviewAdmin(admin.ModelAdmin):
     list_display = ('id', 'product', 'customer', 'created_at', 'updated_at', 'rating')
     list_select_related = ('customer', 'product')
