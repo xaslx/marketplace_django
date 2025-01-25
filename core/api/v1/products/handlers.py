@@ -56,6 +56,6 @@ def get_product_by_id(request: HttpRequest, product_id: int):
     container: Container = get_container()
     product_service: BaseProductService = container.resolve(BaseProductService)
     
-    product: ProductEntity = product_service.get_product_by_id(id=product_id)
+    product: ProductEntity = product_service.get_product_by_id(product_id=product_id)
     
     return ProductSchema.from_entity(entity=product)
