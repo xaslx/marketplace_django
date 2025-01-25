@@ -180,3 +180,7 @@ LOGGING = {
         },
     },
 }
+
+
+ELASTIC_URL = env('ELASTIC_URL')
+ELASTIC_PRODUCT_INDEX = env('ELASTIC_PRODUCT_INDEX', default='product-index')
