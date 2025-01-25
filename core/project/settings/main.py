@@ -43,12 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'elasticapm.contrib.django',
 
     'core.apps.products.apps.ProductConfig',
     'core.apps.customers.apps.CustomersConfig',
 ]
 
 MIDDLEWARE = [
+    'core.project.middlewares.ElasticApmMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -135,3 +137,46 @@ STATIC_ROOT = BASE_DIR / 'static'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+ELASTIC_APM = {
+    'SERVICE_NAME': 'reviews',
+    # 'SECRET_TOKEN': env('APM_SECRET_TOKEN', default='secrettoken'),
+    'SERVER_URL': env('APM_URL', default='http://apm-server:8200'),
+    'DEBUG': DEBUG,
+    'CAPTURE_BODY': 'all',
+    'ENVIROMENT': 'prod',
+    'USE_ELASTIC_EXCEPTHOOK': True,
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': (
+                '%(levelname)s %(asctime)s %(module)s %(process)d '
+                '%(thread)d %(message)s error_meta:\n%(error_meta)s'
+            ),
+        },
+    },
+    'handlers': {
+        'elasticapm': {
+            'level': 'WARNING',
+            'class': 'elasticapm.contrib.django.handlers.LoggingHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'level': 'ERROR',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+    },
+}

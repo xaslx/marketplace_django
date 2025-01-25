@@ -1,4 +1,5 @@
 from functools import lru_cache
+from logging import Logger, getLogger
 
 import punq
 
@@ -13,7 +14,8 @@ from core.apps.products.services.products import (BaseProductService,
                                                   ORMProductService)
 from core.apps.products.services.reviews import (
     BaseReviewService, BaseReviewValidatorService,
-    ComposedReviewValidatorService, ORMReviewService, ReviewRatingValidatorService, SingleReviewValidatorService)
+    ComposedReviewValidatorService, ORMReviewService,
+    ReviewRatingValidatorService, SingleReviewValidatorService)
 from core.apps.products.use_cases.reviews.create import CreateReviewUseCase
 
 
@@ -38,6 +40,7 @@ def _initialize_container() -> punq.Container:
 
     container.register(SingleReviewValidatorService)
     container.register(ReviewRatingValidatorService)
+    container.register(Logger, factory=getLogger, name='django.request')
     
     def build_validators() -> BaseReviewValidatorService:
         return ComposedReviewValidatorService(
