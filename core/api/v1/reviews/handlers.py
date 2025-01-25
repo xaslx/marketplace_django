@@ -1,6 +1,8 @@
-from datetime import datetime
+from dataclasses import asdict
+from logging import Logger
 from ninja import Router, Header
 from django.http import HttpRequest
+import orjson
 from core.api.schemas import ApiResponse
 from core.api.v1.reviews.schemas import ReviewInSchema, CreateReviewSchema, ReviewOutSchema
 from core.apps.common.exceptions import ServiceException
@@ -39,6 +41,11 @@ def add_review(
             review=schema.to_entity(),
     )
     except ServiceException as exception:
+        logger: Logger = container.resolve(Logger)
+        logger.error(
+            msg='User could not create review',
+            extra={'error_meta': orjson.dumps(exception).decode()},
+        )
         raise HttpError(
             status_code=400,
             message=exception.message,
