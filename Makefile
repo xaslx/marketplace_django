@@ -7,6 +7,7 @@ ENV = --env-file .env
 APP_FILE = docker_compose/app.yaml
 APP_CONTAINER = main-app
 MANAGEPY = python manage.py
+MONITORING_FILE = docker_compose/monitoring.yaml
 
 .PHONY: storages
 storages:
@@ -60,3 +61,18 @@ collectstatic:
 .PHONY: run-tests
 run-tests:
 	${EXEC} ${APP_CONTAINER} pytest -s -v
+
+
+.PHONY: monitoring
+monitoring:
+	${DC} -f ${MONITORING_FILE} ${ENV} up --build -d
+
+
+.PHONY: monitoring-down
+monitoring-down:
+	${DC} -f ${MONITORING_FILE} ${ENV} down
+
+
+.PHONY: monitoring-logs
+monitoring-logs:
+	${DC} -f ${MONITORING_FILE} ${ENV} logs -f
